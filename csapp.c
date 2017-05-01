@@ -663,12 +663,12 @@ void Sem_init(sem_t *sem, int pshared, unsigned int value) {
     unix_error("Sem_init error");
 }
 
-void P(sem_t *sem) {
+void CRITICAL_CODE_SECTION_BEGIN(sem_t *sem) {
   if (sem_wait(sem) < 0)
     unix_error("P error");
 }
 
-void V(sem_t *sem) {
+void CRITICAL_CODE_SECTION_END(sem_t *sem) {
   if (sem_post(sem) < 0)
     unix_error("V error");
 }
@@ -879,6 +879,7 @@ int open_clientfd(char *hostname, char *port) {
   hints.ai_flags = AI_NUMERICSERV;  /* ... using a numeric port arg. */
   hints.ai_flags |= AI_ADDRCONFIG;  /* Recommended for connections */
   printf("Your host tonight is: %s\n",hostname);
+  printf("%s\n",port);
   rc = getaddrinfo(hostname, port, &hints, &listp);
   if (rc != 0) {
     fprintf(stderr, "getaddrinfo failed (%s:%s): %s\n", hostname, port, gai_strerror(rc));
