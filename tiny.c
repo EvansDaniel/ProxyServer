@@ -121,16 +121,21 @@ void doit(int fd) {
   char* host = "registrar.sewanee.edu";
   /*char* test_host = malloc(strlen(host));
   memcpy(test_host,host,strlen(host));*/
-  view_string(host);
-  view_string(host_p);
+  printf("%s\n","Lol");
+  for(int i = 0; i < strlen(host_p)+10; i++) {
+    printf("%d ",(int)*(host_p + i));
+  }
   printf("%s\n","Making connection to server");
   int client_fd = open_clientfd(host, port_p);
-
+  if(client_fd == -1) {
+    perror("client fd problem: ");
+  }
   rio_writen(client_fd,headers,strlen(headers));
   printf("%s\n","Headers:");
   printf("%s\n",headers);
   read_response_write_headers(client_fd,fd);
   write_bs(fd);
+  //exit(1);
 }
 /* $end doit */
 

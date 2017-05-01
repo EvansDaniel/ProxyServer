@@ -46,21 +46,36 @@ char* parse_path(char* uri) {
 
 void read_response_write_headers(int clientfd,int proxy_clientfd) {
   printf("%s\n","Reading response:");
+  FILE *file_d = open("");
+  if(file_d == NULL) {
+    perror("file_d: ");
+  }
   rio_t response_rio;
   char buf[MAXLINE];
   Rio_readinitb(&response_rio,clientfd);
   Rio_readlineb(&response_rio,buf,MAXLINE);
+  //Rio_writen(file_d,buf,MAXLINE);
+  fprintf(file_d,"%s",buf);
+  printf("%s\n",buf);
   // read the headers
   memset(buf,0,MAXLINE);
   while(strcmp(buf,"\r\n")) {
     Rio_readlineb(&response_rio,buf,MAXLINE);
+    fprintf(file_d,"%s",buf);
+    fprintf(file_d,"%s",buf);
+    //Rio_writen(file_d,buf,MAXLINE);
     printf("%s",buf);
-    //rio_writen(proxy_clientfd,buf,strlen(buf));
+    rio_writen(proxy_clientfd,buf,strlen(buf));
   }
-  while(strcmp(buf,"\r\n")) {
+  Rio_readlineb(&response_rio,buf,MAXLINE);
+  printf("%s\n",buf);
+  //Rio_writen(file_d,buf,MAXLINE);
+  Rio_readlineb(&response_rio,buf,MAXLINE);
+  //Rio_writen(file_d,buf,MAXLINE);
+  while(strcmp(buf,"</html>")) {
     Rio_readlineb(&response_rio,buf,MAXLINE);
     printf("%s",buf);
-    //rio_writen(proxy_clientfd,buf,strlen(buf));
+    rio_writen(proxy_clientfd,buf,strlen(buf));
   }
 }
 
