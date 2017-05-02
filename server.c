@@ -3,9 +3,7 @@
  * tiny.c - A simple, iterative HTTP/1.0 Web server that uses the 
  *     GET method to serve static and dynamic content.
  */
-#include "csapp.h"
-#include "parser_headers.h"
-#include "helpers.h"
+#include "server.h"
 
 void process_request(int fd);
 
@@ -96,8 +94,16 @@ void process_request(int fd) {
   int client_fd = open_clientfd(host_p, port_p);
   rio_writen(client_fd,headers,strlen(headers));
 
-  int numBytes = read_response_write_client(client_fd,fd);
-  char *domain = malloc(strlen(path)+strlen(host_p));
+  ssize_t numBytes = read_response_write_client(client_fd,fd);
+  struct sockaddr_in socket_address;
+  socklen_t socklen = sizeof(socket_address);
+
+  if(getsockname(client_fd,(SA *) &socket_address, &socklen) == -1)
+    perror("getsockname() error");
+  if (log_response(&socket_address, uri, numBytes) == -1)
+    perror("Failed to log response");
+
+
   shutdown(fd, SHUT_RDWR);
   printf("%s\n","End request");
 }

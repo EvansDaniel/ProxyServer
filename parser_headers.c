@@ -1,10 +1,4 @@
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "parser_headers.h"
-#include "csapp.h"
-#include "helpers.h"
+#include "server.h"
 
 char* parse_header_value(char* header) {
   if(header == NULL) {
@@ -60,7 +54,7 @@ char* parse_path(char* uri) {
 }
 
 
-int read_response_write_client(int clientfd, int proxy_clientfd) {
+ssize_t read_response_write_client(int clientfd, int proxy_clientfd) {
 
   printf("%s\n","Reading response:");
   char* content_length = "Content-Length:";
@@ -78,6 +72,7 @@ int read_response_write_client(int clientfd, int proxy_clientfd) {
 
   char server_reply[MAXLINE];
   ssize_t recv_bytes = 0;
+  ssize_t numBytes = 0;
   if(write(clientfd,"H",1) < 0) {
     perror("write");
   }
@@ -87,12 +82,13 @@ int read_response_write_client(int clientfd, int proxy_clientfd) {
     if(rio_writen(proxy_clientfd,server_reply,recv_bytes) < 0) {
       perror("rio_writen");
     }
+    numBytes += recv_bytes;
   }
   printf("%s\n","here");
   if(recv_bytes < 0) {
     perror("recv");
   }
-  printf("Recv bytes %d\n",recv_bytes);
+  printf("Recv bytes %zd\n",recv_bytes);
 
   /*// Read response headers and print to stdout
   memset(buf,0,MAXLINE);
@@ -136,7 +132,7 @@ int read_response_write_client(int clientfd, int proxy_clientfd) {
       }
     }
   }*/
-  return 0;
+  return numBytes;
 }
 
 /**
