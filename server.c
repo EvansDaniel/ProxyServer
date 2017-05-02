@@ -120,7 +120,6 @@ void process_request(int fd) {
   shutdown(client_fd, SHUT_RDWR);
   Close(client_fd);
   free(headers);
-  free(header_value);
   free(path);
   free(host_p);
   printf("%s\n","End Request");
@@ -133,7 +132,6 @@ int read_request_headers(rio_t *rp,char* headers) {
     return -1;
   }
   add_header(buf,headers);
-  //add_header("\r\n",headers);
   char* proxy_conn = "Proxy-Connection:";
   char* conn = "Connection";
   add_header("Connection: close\r\n",headers);
@@ -160,7 +158,7 @@ int read_request_headers(rio_t *rp,char* headers) {
  */
 /* $begin clienterror */
 void clienterror(int fd, char *cause, char *errnum,
-                 char *shortmsg, char *longmsg) {
+                 char *shortmsg, char *longmsg){
   char buf[MAXLINE], body[MAXBUF];
 
   /* Build the HTTP response body */
@@ -172,20 +170,21 @@ void clienterror(int fd, char *cause, char *errnum,
 
   /* Print the HTTP response */
   sprintf(buf, "HTTP/1.0 %s %s\r\n", errnum, shortmsg);
-  if(rio_writen(fd, buf, strlen(buf)) = -1){
+  if(rio_writen(fd, buf, strlen(buf)) == -1){
     perror("rio_writen() error");
     return;
   }
   sprintf(buf, "Content-type: text/html\r\n");
-  if(rio_writen(fd, buf, strlen(buf)) = -1){
+  if(rio_writen(fd, buf, strlen(buf)) == -1){
     perror("rio_writen() error");
     return;
   }
   sprintf(buf, "Content-length: %d\r\n\r\n", (int) strlen(body));
-  if(rio_writen(fd, buf, strlen(buf)) = -1){
+  if(rio_writen(fd, buf, strlen(buf)) == -1){
     perror("rio_writen() error");
     return;
-  if(rio_writen(fd, buf, strlen(buf)) = -1){
+  }
+  if(rio_writen(fd, buf, strlen(buf)) == -1){
     perror("rio_writen() error");
     return;
   }

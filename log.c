@@ -33,7 +33,7 @@ int log_response(struct sockaddr_in *sockaddr, char *uri, ssize_t size) {
   }
 
   sprintf(responseInfo, "[%s] %s  %s  %ld\r\n",time_str,addr,uri,size);
-  if(rio_writen(fd, responseInfo, strlen(responseInfo) == -1){
+  if(rio_writen(fd, responseInfo, strlen(responseInfo)) == -1){
     perror("rio_writen() error");
     Close(fd);
     return -1;

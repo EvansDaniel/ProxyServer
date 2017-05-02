@@ -12,7 +12,7 @@
 
 void process_request(int fd);
 
-void read_request_headers(rio_t *rp, char* headers);
+int read_request_headers(rio_t *rp, char* headers);
 char* parse_path(char* uri);
 void get_filetype(char *filename, char *filetype);
 void clienterror(int fd, char *cause, char *errnum,

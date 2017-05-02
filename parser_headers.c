@@ -54,7 +54,7 @@ char *parse_path(char *uri) {
   return path;
 }
 
-
+// Should numBytes really come from here?? Consider using parse_header_value
 ssize_t read_response_write_client(int clientfd, int proxy_clientfd) {
 
   int timeout = 3;
