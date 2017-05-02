@@ -134,7 +134,9 @@ void doit(int fd) {
   rio_writen(client_fd,headers,strlen(headers));
   printf("%s\n","Headers:");
   printf("%s\n",headers);
-  read_response_write_headers(client_fd,fd);
+  int numBytes = read_response_write_headers(client_fd,fd);
+  char *domain = malloc(strlen(path)+strlen(host_p));
+  log_response(serv_addr, domain)
 
   //shutdown(client_fd, SHUT_RDWR);
   //Close(client_fd);
