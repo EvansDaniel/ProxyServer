@@ -893,8 +893,8 @@ int open_clientfd(char *hostname, char *port) {
       continue; /* Socket failed, try the next */
 
     struct timeval tv;
-    tv.tv_sec = 5;  /* 30 Secs Timeout */
-    tv.tv_usec = 0;  // Not init'ing this can cause strange errors
+    tv.tv_sec = 0;
+    tv.tv_usec = 1000000;  // Half a second timeout
     setsockopt(clientfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv,sizeof(struct timeval));
     /* Connect to the server */
     if (connect(clientfd, p->ai_addr, p->ai_addrlen) != -1)
