@@ -878,8 +878,11 @@ int open_clientfd(char *hostname, char *port) {
   hints.ai_socktype = SOCK_STREAM;  /* Open a connection */
   hints.ai_flags = AI_NUMERICSERV;  /* ... using a numeric port arg. */
   hints.ai_flags |= AI_ADDRCONFIG;  /* Recommended for connections */
+<<<<<<< HEAD
   printf("Your host tonight is: %s\n",hostname);
   printf("%s\n",port);
+=======
+>>>>>>> parent of 35ea6e7... Hola
   rc = getaddrinfo(hostname, port, &hints, &listp);
   if (rc != 0) {
     fprintf(stderr, "getaddrinfo failed (%s:%s): %s\n", hostname, port, gai_strerror(rc));

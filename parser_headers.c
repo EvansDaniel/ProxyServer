@@ -44,20 +44,36 @@ char* parse_path(char* uri) {
 
 int read_response_write_client(int clientfd, int proxy_clientfd) {
   printf("%s\n","Reading response:");
+<<<<<<< HEAD
   FILE* file_d = fopen("file.txt","w+");
   if(file_d == NULL) {
     perror("file_d: ");
   }
+=======
+>>>>>>> parent of 35ea6e7... Hola
   rio_t response_rio;
   char buf[MAXLINE];
   Rio_readinitb(&response_rio,clientfd);
   Rio_readlineb(&response_rio,buf,MAXLINE);
+<<<<<<< HEAD
   fprintf(file_d,"%s",buf);
+=======
+>>>>>>> parent of 35ea6e7... Hola
   // read the headers
   memset(buf,0,MAXLINE);
   while(strcmp(buf,"\r\n")) {
     Rio_readlineb(&response_rio,buf,MAXLINE);
+<<<<<<< HEAD
     fprintf(file_d,"%s",buf);
+=======
+    printf("%s",buf);
+    //rio_writen(proxy_clientfd,buf,strlen(buf));
+  }
+  while(strcmp(buf,"\r\n")) {
+    Rio_readlineb(&response_rio,buf,MAXLINE);
+    printf("%s",buf);
+    //rio_writen(proxy_clientfd,buf,strlen(buf));
+>>>>>>> parent of 35ea6e7... Hola
   }
   fflush(file_d);
   return 0;
