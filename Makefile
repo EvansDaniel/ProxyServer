@@ -5,18 +5,14 @@ CFLAGS = -O2 -Wall -I .
 # Others systems will probably require something different.
 LIB = -lpthread
 
-all: tiny
+all: server
 
-tiny: tiny.c csapp.o
-	$(CC) $(CFLAGS) -o tiny parser_headers.c tiny.c csapp.o $(LIB)
+server: server.c csapp.o
+	$(CC) $(CFLAGS) -o server *.c $(LIB)
 
 csapp.o: csapp.c
 	$(CC) $(CFLAGS) -c csapp.c
 
-cgi:
-	(cd cgi-bin; make)
-
 clean:
-	rm -f *.o tiny *~
-	(cd cgi-bin; make clean)
+	rm -f *.o tiny *~ file.txt
 

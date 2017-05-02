@@ -169,8 +169,8 @@ void Pthread_once(pthread_once_t *once_control, void (*init_function)());
 
 /* POSIX semaphore wrappers */
 void Sem_init(sem_t *sem, int pshared, unsigned int value);
-void P(sem_t *sem);
-void V(sem_t *sem);
+void CRITICAL_CODE_SECTION_BEGIN(sem_t *sem);
+void CRITICAL_CODE_SECTION_END(sem_t *sem);
 
 /* Rio (Robust I/O) package */
 ssize_t rio_readn(int fd, void *usrbuf, size_t n);

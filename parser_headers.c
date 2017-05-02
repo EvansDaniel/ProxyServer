@@ -4,6 +4,8 @@
 #include <netdb.h>
 #include <zconf.h>
 #include <errno.h>
+#include <malloc.h>
+
 #include "parser_headers.h"
 #include "csapp.h"
 
@@ -45,7 +47,15 @@ char* parse_path(char* uri) {
   return path;
 }
 
-int read_response_write_headers(int clientfd,int proxy_clientfd) {
+
+int read_response_write_client(int clientfd, int proxy_clientfd) {
+  printf("%s\n","Reading response:");
+
+  FILE* file_d = fopen("file.txt","w+");
+  if(file_d == NULL) {
+    perror("file_d: ");
+  }
+
 
   rio_t response_rio;
   char buf[MAXLINE];
@@ -54,6 +64,7 @@ int read_response_write_headers(int clientfd,int proxy_clientfd) {
   printf("%s\n","Reading response:");
   Rio_readinitb(&response_rio,clientfd);
   Rio_readlineb(&response_rio,buf,MAXLINE);
+
   printf("%s\n", buf);
 
   // Read response headers and print to stdout
@@ -101,7 +112,71 @@ void log_response(struct sockaddr_in *sockaddr, char *uri, int size){
 
   sprintf(responseInfo, "[%s] %s  %s  %d\r\n",time_str,addr,uri,size);
   Rio_writen(fd, responseInfo, strlen(responseInfo));
+
+  fprintf(file_d,"%s",buf);
+
+  // read the headers
+  memset(buf,0,MAXLINE);
+  while(strcmp(buf,"\r\n")) {
+    Rio_readlineb(&response_rio,buf,MAXLINE);
+
+    fprintf(file_d,"%s",buf);
+
+    printf("%s",buf);
+    //rio_writen(proxy_clientfd,buf,strlen(buf));
+  }
+  while(strcmp(buf,"\r\n")) {
+    Rio_readlineb(&response_rio,buf,MAXLINE);
+    printf("%s",buf);
+    //rio_writen(proxy_clientfd,buf,strlen(buf));
+  }
+  fflush(file_d);
+  return 0;
 }
+
+/**
+ * Will append the header to the headers
+ * @param header the header to add
+ * @param headers  the headers that will ultimately be sent to
+ * the other server
+ */
+void add_header(char* header, char* headers) {
+  sprintf(headers,"%s%s",headers,header);
+}
+
+/**
+ *
+ * @param host_header of the form "Host: host_domain"
+ * @return the parsed host
+ */
+char* parse_host(char* host_header) {
+  char *t_host;
+  // tmp malloc for not corrupting buf to parse the host line
+  char *temp_buf = malloc(strlen(host_header));
+  memcpy(temp_buf,host_header,strlen(host_header));
+  strtok(temp_buf," ");
+  // the parsed host
+  t_host = strtok(NULL," ");
+  char* host = malloc(MAXLINE);
+  memcpy(host,t_host,MAXLINE);
+  free(temp_buf);
+  return host;
+}
+
+int count_response_bytes() {
+  return -1;;
+}
+
+/**
+ * Trys connecting to the host on the www sub domain
+ * @param host_p The host to connect to
+ * @return
+ */
+/*int try_prepending_www(char *host_p) {
+  char* www = "www.";
+  sprintf(host_p,"%s%s",www,host_p);
+  int client_fd = open_clientfd(host_p)
+}*/
 
 void view_string(char* string) {
   printf("Viewing string %s\n",string);
