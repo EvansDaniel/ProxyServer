@@ -1,5 +1,6 @@
 #include <string.h>
-#include <malloc.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <netdb.h>
 #include <zconf.h>
 #include <errno.h>
@@ -44,39 +45,62 @@ char* parse_path(char* uri) {
   return path;
 }
 
-void read_response_write_headers(int clientfd,int proxy_clientfd) {
-  printf("%s\n","Reading response:");
-  FILE *file_d = open("");
-  if(file_d == NULL) {
-    perror("file_d: ");
-  }
+int read_response_write_headers(int clientfd,int proxy_clientfd) {
+
   rio_t response_rio;
   char buf[MAXLINE];
+  int bytes;
+
+  printf("%s\n","Reading response:");
   Rio_readinitb(&response_rio,clientfd);
   Rio_readlineb(&response_rio,buf,MAXLINE);
-  //Rio_writen(file_d,buf,MAXLINE);
-  fprintf(file_d,"%s",buf);
-  printf("%s\n",buf);
-  // read the headers
+  printf("%s\n", buf);
+
+  // Read response headers and print to stdout
   memset(buf,0,MAXLINE);
   while(strcmp(buf,"\r\n")) {
     Rio_readlineb(&response_rio,buf,MAXLINE);
-    fprintf(file_d,"%s",buf);
-    fprintf(file_d,"%s",buf);
-    //Rio_writen(file_d,buf,MAXLINE);
     printf("%s",buf);
-    rio_writen(proxy_clientfd,buf,strlen(buf));
   }
-  Rio_readlineb(&response_rio,buf,MAXLINE);
-  printf("%s\n",buf);
-  //Rio_writen(file_d,buf,MAXLINE);
-  Rio_readlineb(&response_rio,buf,MAXLINE);
-  //Rio_writen(file_d,buf,MAXLINE);
+
+  // Write the binary code to proxy client
   while(strcmp(buf,"</html>")) {
     Rio_readlineb(&response_rio,buf,MAXLINE);
-    printf("%s",buf);
-    rio_writen(proxy_clientfd,buf,strlen(buf));
+    bytes += strlen(buf);
+    Rio_writen(proxy_clientfd,buf,strlen(buf));
   }
+  Close(file_d);
+  return bytes;
+}
+
+/*
+ * log_response - Create a formatted log entry in proxy.log. 
+ * 
+ * The inputs are the socket address of the requesting client
+ * (sockaddr), the URI from the request (uri), and the size in bytes
+ * of the response from the server (size).
+ */
+void log_response(struct sockaddr_in *sockaddr, char *uri, int size){
+  int fd = open("proxy.log", O_CREAT | O_RDWR | O_TRUNC, S_IRUSR | S_IWUSR);
+  if(fd < 0) {
+    perror("LogFile error");
+    return;
+  }
+  char* responseInfo = malloc(MAXLINE*3);   
+  time_t now;
+  char time_str[MAXLINE];
+  char addr[INET_ADDRSTRLEN];
+  unsigned long host;
+
+  /* Get a formatted time string */
+  now = time(NULL);
+  strftime(time_str, MAXLINE, "%a %d %b %Y %H:%M:%S %Z", localtime(&now));
+
+  if(!inet_ntop(AF_INET, sockaddr->sin_addr, addr, INET_ADDRSTRLEN))
+    perror("inet_ntop Error");
+
+  sprintf(responseInfo, "[%s] %s  %s  %d\r\n",time_str,addr,uri,size);
+  Rio_writen(fd, responseInfo, strlen(responseInfo));
 }
 
 void view_string(char* string) {

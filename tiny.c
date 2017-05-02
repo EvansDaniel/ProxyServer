@@ -46,11 +46,12 @@ int main(int argc, char **argv) {
     Getnameinfo((SA *) &clientaddr, clientlen, hostname, MAXLINE,
                 port, MAXLINE, 0);
     printf("%s\n","Client accepted");
-    doit(connfd);                                             //line:netp:tiny:doit
-    Close(connfd);                                            //line:netp:tiny:close
+    doit(connfd);
+    Close(connfd);                                          //line:netp:tiny:doit                                           //line:netp:tiny:close
   }
 }
 /* $end tinymain */
+
 void remove_all_chars(char* str, char c) {
   char *pr = str, *pw = str;
   while (*pr) {
@@ -60,11 +61,11 @@ void remove_all_chars(char* str, char c) {
   *pw = '\0';
 }
 
-void write_bs(int fd) {
+/*void write_bs(int fd) {
   char* lol = "yoyo";
-  //** Parse URI from GET request */
+  //** Parse URI from GET request * /
   rio_writen(fd,lol,strlen(lol));
-}
+}*/
 
 /*
  * doit - handle one HTTP request/response transaction
@@ -134,7 +135,11 @@ void doit(int fd) {
   printf("%s\n","Headers:");
   printf("%s\n",headers);
   read_response_write_headers(client_fd,fd);
-  write_bs(fd);
+
+  //shutdown(client_fd, SHUT_RDWR);
+  //Close(client_fd);
+  shutdown(fd, SHUT_RDWR);
+  //write_bs(fd);
   //exit(1);
 }
 /* $end doit */
