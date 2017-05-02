@@ -58,7 +58,7 @@ char *parse_path(char *uri) {
 ssize_t read_response_write_client(int clientfd, int proxy_clientfd) {
 
   int timeout = 3;
-  printf("%s\n", "Reading response:");
+  printf("\n%s\n", "Reading response...");
 
   char server_reply[MAXLINE];
   ssize_t recv_bytes = 0;
@@ -68,15 +68,18 @@ ssize_t read_response_write_client(int clientfd, int proxy_clientfd) {
   {
     //puts(server_reply);
     if(rio_writen(proxy_clientfd,server_reply,recv_bytes) < 0) {
-      perror("rio_writen");
+      perror("rio_writen() error");
+      shutdown(proxy_clientfd, SHUT_RDWR);
+      return -1;
     }
     numBytes += recv_bytes;
   }
-  printf("%s\n","here");
-  if(recv_bytes < 0) {
-    perror("recv");
+
+  if(recv_bytes < 0){
+    perror("recv() error");
+    shutdown(clientfd, SHUT_RDWR);
     return -1;
-  }
+  }  
   return numBytes;
 }
 
