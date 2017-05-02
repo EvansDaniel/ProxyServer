@@ -27,11 +27,11 @@ int main() {
     pthread_detach(pthread_self());
   }
 
-  /*for(int i = 0; i < 10; i++) {
+  for(int i = 0; i < 10; i++) {
     if(pthread_join(tid[i],NULL)) {
       perror("pthread_join");
     }
-  }*/
+  }
   // move file pointer to start of file, (could use rewind(FILE*) but who likes helper functions?
   if(fseek(file,0,SEEK_SET) < 0) {
     perror("fseek");

@@ -7,12 +7,12 @@ LIB = -lpthread
 
 all: server
 
-server: server.c csapp.o
-	$(CC) $(CFLAGS) -o server *.c $(LIB)
+server: server
+	$(CC) $(CFLAGS) -o server server.c csapp.c log.c parser_headers.c $(LIB)
 
 csapp.o: csapp.c
 	$(CC) $(CFLAGS) -c csapp.c
 
-clean:
-	rm -f *.o tiny *~ file.txt
+#clean:
+#	rm -f *.o file.txt
 

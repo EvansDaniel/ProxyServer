@@ -5,6 +5,8 @@
 #ifndef UNTITLED_SERVER_H
 #define UNTITLED_SERVER_H
 
+#include "csapp.h"
+
 void process_request(int fd);
 
 char* read_request_headers(rio_t *rp, char* headers);
