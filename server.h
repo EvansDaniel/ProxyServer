@@ -12,9 +12,8 @@
 
 void process_request(int fd);
 
-char* read_request_headers(rio_t *rp, char* headers);
+void read_request_headers(rio_t *rp, char* headers);
 char* parse_path(char* uri);
-void serve_static(int fd, char *filename, int filesize);
 void get_filetype(char *filename, char *filetype);
 void clienterror(int fd, char *cause, char *errnum,
                  char *shortmsg, char *longmsg);
@@ -32,7 +31,7 @@ void clienterror(int fd, char *cause, char *errnum,
 #define UNTITLED_PARSER_HEADERS_H
 
 char* parse_path(char* uri);
-void view_string(char* string);
+void view_string(char* string,int len);
 ssize_t read_response_write_client(int clientfd, int proxy_clientfd);
 void add_header(char* header, char* headers);
 char* try_prepending_www(char *p);

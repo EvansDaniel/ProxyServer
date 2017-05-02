@@ -8,10 +8,9 @@
 #define UNTITLED_PARSER_HEADERS_H
 
 char* parse_path(char* uri);
-void view_string(char* string);
+void view_string(char* string,int len);
 int read_response_write_client(int clientfd, int proxy_clientfd);
 void add_header(char* header, char* headers);
 char* try_prepending_www(char *p);
 char* parse_host(char* host_header);
-char* new_parse_host(char* uri);
 #endif //UNTITLED_PARSER_HEADERS_H

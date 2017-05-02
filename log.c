@@ -8,7 +8,7 @@
  * of the response from the server (size).
  */
 int log_response(struct sockaddr_in *sockaddr, char *uri, ssize_t size) {
-  int fd = open("proxy.log", O_CREAT | O_RDWR | O_TRUNC, S_IRUSR | S_IWUSR);
+  int fd = open("proxy.log", O_CREAT | O_RDWR | O_APPEND, S_IRUSR | S_IWUSR);
   if(fd < 0) {
     perror("LogFile error");
     return -1;

@@ -5,23 +5,6 @@
  */
 #include "server.h"
 
-void process_request(int fd);
-
-char* read_requesthdrs(rio_t *rp, char* headers);
-
-char* parse_path(char* uri);
-
-int parse_uri(char *uri, char *filename, char *cgiargs);
-
-void serve_static(int fd, char *filename, int filesize);
-
-void get_filetype(char *filename, char *filetype);
-
-void serve_dynamic(int fd, char *filename, char *cgiargs);
-
-void clienterror(int fd, char *cause, char *errnum,
-                 char *shortmsg, char *longmsg);
-
 int num_requests;
 
 void print_requests() {
@@ -86,12 +69,15 @@ void process_request(int fd) {
     return;
   }
   add_header(buf,headers);
-  read_requesthdrs(&rio,headers);
-  printf("headers %s\n",headers);
-  char* host_p = new_parse_host(uri);
+  read_request_headers(&rio,headers);
+  char* host_p = parse_host(uri);
   char* port_p = "80";
   printf("%s\n","Making connection to server");
   int client_fd = open_clientfd(host_p, port_p);
+  if(client_fd < 0) {
+    printf("%s\n","ClientFD FAILED");
+    return;
+  }
   rio_writen(client_fd,headers,strlen(headers));
 
   ssize_t numBytes = read_response_write_client(client_fd,fd);
@@ -109,11 +95,7 @@ void process_request(int fd) {
 }
 
 
-/*
- * read_requesthdrs - read HTTP request headers
- */
-/* $begin read_requesthdrs */
-char* read_requesthdrs(rio_t *rp,char* headers) {
+void read_request_headers(rio_t *rp,char* headers) {
   char buf[MAXLINE];
   Rio_readlineb(rp, buf, MAXLINE);
   add_header(buf,headers);
@@ -130,8 +112,6 @@ char* read_requesthdrs(rio_t *rp,char* headers) {
     }
     add_header(buf,headers);
   }
-  // remove the \r\n from the host string
-  return NULL;
 }
 /* $end read_requesthdrs */
 
