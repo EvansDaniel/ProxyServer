@@ -16,6 +16,7 @@
 int log_response(struct sockaddr_in *sockaddr, char *uri, ssize_t size) {
 
   // open a descriptor to the file
+  // TODO: pass this to the function, it is inefficient to reopen the descriptor for each thread
   int fd = open("proxy.log", O_CREAT | O_RDWR | O_APPEND, S_IRUSR | S_IWUSR);
   if(fd < 0) {
     perror("open() error");

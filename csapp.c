@@ -663,12 +663,12 @@ void Sem_init(sem_t *sem, int pshared, unsigned int value) {
     unix_error("Sem_init error");
 }
 
-void CRITICAL_CODE_SECTION_BEGIN(sem_t *sem) {
+void P(sem_t *sem) {
   if (sem_wait(sem) < 0)
     unix_error("P error");
 }
 
-void CRITICAL_CODE_SECTION_END(sem_t *sem) {
+void V(sem_t *sem) {
   if (sem_post(sem) < 0)
     unix_error("V error");
 }

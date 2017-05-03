@@ -7,8 +7,9 @@
 
 /* $end tinymain */
 void remove_all_chars(char* str, char c);
-void write_bs(int fd);
-int min(int a, int b);
-int max(int a, int b);
+
+int CRITICAL_CODE_SECTION_BEGIN(sem_t *sem);
+
+int CRITICAL_CODE_SECTION_END(sem_t *sem);
 
 #endif //UNTITLED_HELPERS_H
