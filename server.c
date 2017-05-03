@@ -1,6 +1,15 @@
 /**
- * Team Members: Daniel Evans, Adrian Preston, and Blaise Iradukunda
+ *
+ *    server.c - An iterative proxy server for cs428 Final Project
+ *    By:
+ *       Adrian Preston       prestaj0@sewanee.edu
+ *       Daniel Evans         evansdb0@sewanee.edu
+ *       Blaise Iradukunda    iradub0sewanee.edu
+ *
+ *    The University of the South - Easter Semester 2017
+ *
  */
+
 #include "server.h"
 
 sem_t log_mutex;
