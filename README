@@ -1,38 +1,35 @@
-Tiny Web server
-Dave O'Hallaron
-Carnegie Mellon University
+Authors:
 
-This is the home directory for the Tiny server, a 200-line Web
-server that we use in "15-213: Intro to Computer Systems" at Carnegie
-Mellon University.  Tiny uses the GET method to serve static content
-(text, HTML, GIF, and JPG files) out of ./ and to serve dynamic
-content by running CGI programs out of ./cgi-bin. The default 
-page is home.html (rather than index.html) so that we can view
-the contents of the directory from a browser.
+Daniel Evans, Adrian Preston, and Blaise Iradukunda
 
-Tiny is neither secure nor complete, but it gives students an
-idea of how a real Web server works. Use for instructional purposes only.
+We built the proxy server starting from the Tiny Server code. We modified almost
+everything in the program. One interesting modification was the client_error function
+We learned that using sprintf to copy a string to itself plus another string causes
+undefined behavior, even though generally speaking it works out. The reason is that
+sprintf uses memcpy (at least the glibc implementation) under the hood to ultimately
+copy the formatted string and memcpy explicitly says in the man page that overlapping
+pointers passed as arguments for copying causes undefined behavior.
 
-The code compiles and runs cleanly using gcc 2.95.3 
-on a Linux 2.2.20 kernel.
+We managed to get the proxy working for any non-https site on the web. Sometimes
+it takes longer than expected for the "full" page to load even though the entire page
+is essentially loaded. This can be seen very well with the "registrar.sewanee.edu"
+site. We learned after some inspection that the initial request to the server causes
+a cascade of requests to the exact same uri (registrar.sewanee.edu). Some of the requests
+are to load other resources for the site (such as css,js, images,etc) however. Furthermore,
+inspecting the log file, you would see multiple requests to the registrar page with the same
+number of received bytes. We were not sure why this was happening, but it doesn't affect
+the overall capabilities of the program (i.e. it still loads the page and the program
+can still handle multiple requests at a time)
 
-To install Tiny:
-   Type "tar xvf tiny.tar" in a clean directory. 
+Improvements to the program could include allowing more access protocols to be
+serviceable by our server (such as https) as well as improvements to response speed
+by reducing the number the number of requests the proxy has to make to the peer server
+(i.e. registrar.sewanee.edu) by implementing a caching system.
 
-To run Tiny:
-   Run "tiny <port>" on the server machine, 
-	e.g., "tiny 8000".
-   Point your browser at Tiny: 
-	static content: http://<host>:8000
-	dynamic content: http://<host>:8000/cgi-bin/adder?1&2
+------------------------------- BUILDING THE PROGRAM -------------------------------------------
 
-Files:
-  tiny.tar		Archive of everything in this directory
-  tiny.c		The Tiny server
-  Makefile		Makefile for tiny.c
-  home.html		Test HTML page
-  godzilla.gif		Image embedded in home.html
-  README		This file	
-  cgi-bin/adder.c	CGI program that adds two numbers
-  cgi-bin/Makefile	Makefile for adder.c
+To build the program, type "make server" in the working directory. Then run the program
+with "./server <port>", where "<port>" is the port you would like the server to run on.
 
+To make the server work through your browser, you will need to set the proxy settings to work
+through localhost on the port you specify when you run the program at the command line.

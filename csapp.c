@@ -871,7 +871,7 @@ ssize_t Rio_readlineb(rio_t *rp, void *usrbuf, size_t maxlen) {
 /* $begin open_clientfd */
 int open_clientfd(char *hostname, char *port) {
   int clientfd, rc;
-  struct addrinfo hints, *listp, *p;
+  struct addrinfo hints, *listp = NULL, *p;
 
   /* Get a list of potential server addresses */
   memset(&hints, 0, sizeof(struct addrinfo));
@@ -879,7 +879,6 @@ int open_clientfd(char *hostname, char *port) {
   hints.ai_flags = AI_NUMERICSERV;  /* ... using a numeric port arg. */
   hints.ai_flags |= AI_ADDRCONFIG;  /* Recommended for connections */
   printf("Your host tonight is: %s\n",hostname);
-  printf("%s\n",port);
   rc = getaddrinfo(hostname, port, &hints, &listp);
   if (rc != 0) {
     fprintf(stderr, "getaddrinfo failed (%s:%s): %s\n", hostname, port, gai_strerror(rc));
@@ -904,7 +903,6 @@ int open_clientfd(char *hostname, char *port) {
       return -1;
     }
   }
-
 
   /* Clean up */
   freeaddrinfo(listp);

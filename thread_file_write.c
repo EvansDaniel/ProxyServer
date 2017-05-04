@@ -1,4 +1,5 @@
 #include "csapp.h"
+#include "helpers.h"
 
 volatile int my_count = 0;
 sem_t mutex;

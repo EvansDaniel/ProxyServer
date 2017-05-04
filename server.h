@@ -5,7 +5,7 @@
 #define UNTITLED_SERVER_H
 
 void* process_request(void* fd);
-int read_request_headers(rio_t *rp, char* headers);
+int read_request_headers(rio_t *rp,char* headers,char* host);
 char* parse_path(char* uri);
 void clienterror(int fd, char *cause, char *errnum, char *shortmsg, char *longmsg);
 void cleanup(int peer_serverfd,char* headers,char* path,char* host_p, void* connfd);
